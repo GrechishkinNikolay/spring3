@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Created-By: IntelliJ IDEA
 Built-By: n.a.grechishkin
-Build-Jdk: version 1.8.0_281
+Build-Jdk: version 15.0.1
 Implementation-Title: spring-app-learning Maven Webapp
 Implementation-Version: 1.0-SNAPSHOT
 Implementation-Vendor-Id: ru.grechishkin.spring3
