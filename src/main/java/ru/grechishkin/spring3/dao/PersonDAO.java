@@ -10,7 +10,6 @@ public class PersonDAO {
 
     private static int PEOPLE_COUNT = 0;
     private List<Person> people;
-
     {
         people = new ArrayList<>();
         people.add(new Person(++PEOPLE_COUNT, "Tom1"));
@@ -19,11 +18,15 @@ public class PersonDAO {
         people.add(new Person(++PEOPLE_COUNT, "Tom4"));
     }
 
-    public List<Person> index() {
+    public List<Person> getPeoples() {
         return people;
     }
 
     public Person show(int id) {
-        return people.stream().filter(person -> person.getId() == id).findAny().orElse(null);
+        return people
+            .stream()
+            .filter(person -> person.getId() == id)
+            .findAny()
+            .orElse(null);
     }
 }

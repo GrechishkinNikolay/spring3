@@ -22,15 +22,14 @@ public class PeopleController {
     @GetMapping()
     public String index(Model model) {
         //получим челиков
-        model.addAttribute("people", personDAO.index());
-
-        return "people/index";
+        model.addAttribute("people", personDAO.getPeoples());
+        return "index";
     }
 
     @GetMapping("/{id}")
     public String showPerson(@PathVariable("id") int id, Model model) {
         //получим челика по айди из ДАО
         model.addAttribute("person", personDAO.show(id));
-        return "person/show";
+        return "show";
     }
 }
