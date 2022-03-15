@@ -1,9 +1,10 @@
 package ru.grechishkin.spring3.controllers;
 
 import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.grechishkin.spring3.dao.PersonDAO;
 import ru.grechishkin.spring3.models.Person;
-import ru.grechishkin.spring3.multithreading.MyRunnable;
+import ru.grechishkin.spring3.multithreading.MyCallable;
 
 @Controller
 @RequestMapping("/people")
@@ -82,18 +83,21 @@ public class PeopleController {
         return "redirect:/people";
     }
 
-
     @PostMapping("/start")
-    public String startTimer() /*throws InterruptedException*/ {
-//        ExecutorService es = Executors.newCachedThreadPool();
-//        ExecutorService es = Executors.newSingleThreadExecutor();
-//        ExecutorService es = Executors.newFixedThreadPool();
-//        ExecutorService es = Executors.newWorkStealingPool();
-        ExecutorService es = Executors.newFixedThreadPool(10);
-        for (int i = 0; i < 30; i++) {
-            es.submit(new MyRunnable());
-        }
-//        es.awaitTermination(20, TimeUnit.SECONDS);
+    public String startTimer() throws InterruptedException, ExecutionException {
+        ExecutorService es = Executors.newFixedThreadPool(5);
+
+        Future<Integer> future = es.submit(new MyCallable());
+
+        Thread.sleep(1000);
+
+//        future.isDone();
+        future.cancel(true);
+        //        Integer o = future.get();
+        System.out.println("future.isCancelled()? - " + future.isCancelled());
+
+        System.out.println("Shutdown");
+        es.shutdown();
         return "redirect:/people";
     }
 }
