@@ -1,6 +1,9 @@
 package ru.grechishkin.spring3.controllers;
 
 import java.sql.SQLException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.grechishkin.spring3.dao.PersonDAO;
 import ru.grechishkin.spring3.models.Person;
+import ru.grechishkin.spring3.multithreading.MyRunnable;
 
 @Controller
 @RequestMapping("/people")
@@ -75,6 +79,21 @@ public class PeopleController {
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id) {
         personDAO.delete(id);
+        return "redirect:/people";
+    }
+
+
+    @PostMapping("/start")
+    public String startTimer() /*throws InterruptedException*/ {
+//        ExecutorService es = Executors.newCachedThreadPool();
+//        ExecutorService es = Executors.newSingleThreadExecutor();
+//        ExecutorService es = Executors.newFixedThreadPool();
+//        ExecutorService es = Executors.newWorkStealingPool();
+        ExecutorService es = Executors.newFixedThreadPool(10);
+        for (int i = 0; i < 30; i++) {
+            es.submit(new MyRunnable());
+        }
+//        es.awaitTermination(20, TimeUnit.SECONDS);
         return "redirect:/people";
     }
 }

@@ -15,5 +15,9 @@
   <a th:href="@{/people/{id}(id=${person.getId()})}" th:text="${person.getName() + ', ' + person.getAge()}">user</a>
 </div>
 
+<form th:method="post" th:action="@{/people/start}">
+  <button type="submit" id="startTimerButton">Start Timer</button>
+</form>
+
 </body>
 </html>
