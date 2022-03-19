@@ -1,6 +1,8 @@
 package ru.grechishkin.spring3.controllers;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -84,19 +86,26 @@ public class PeopleController {
     }
 
     @PostMapping("/start")
-    public String startTimer() throws InterruptedException, ExecutionException {
-        ExecutorService es = Executors.newFixedThreadPool(5);
+    public String startTimer() throws ExecutionException, InterruptedException {
+        ExecutorService es = Executors.newFixedThreadPool(10);
 
-        Future<Integer> future = es.submit(new MyCallable());
+        List<MyCallable> tasks = new ArrayList<>();
 
-        Thread.sleep(1000);
+        for (int i = 0; i < 3; i++) {
+            MyCallable mc = new MyCallable();
+            tasks.add(mc);
+        }
 
-//        future.isDone();
-        future.cancel(true);
-        //        Integer o = future.get();
-        System.out.println("future.isCancelled()? - " + future.isCancelled());
+//        List<Future<Long>> futures = es.invokeAll(tasks);
+//
+//        for (Future<Long> future: futures) {
+//            System.out.println("future.get()" + future.get());
+//        }
 
-        System.out.println("Shutdown");
+        Long firstFuture = es.invokeAny(tasks);
+
+        System.out.println("future.get()" + firstFuture);
+        System.out.println("FINISHED");
         es.shutdown();
         return "redirect:/people";
     }
