@@ -7,6 +7,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -87,26 +92,29 @@ public class PeopleController {
 
     @PostMapping("/start")
     public String startTimer() throws ExecutionException, InterruptedException {
-        ExecutorService es = Executors.newFixedThreadPool(10);
 
-        List<MyCallable> tasks = new ArrayList<>();
-
-        for (int i = 0; i < 3; i++) {
-            MyCallable mc = new MyCallable();
-            tasks.add(mc);
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(2,
+                                                                       6,
+                                                                       1,
+                                                                       TimeUnit.MILLISECONDS,
+                                                                       new SynchronousQueue<>(),
+                                                                       new MyRejectedExecutionHandler());
+        for (int i = 0; i < 9; i++) {
+            MyCallable myCallable = new MyCallable();
+            threadPoolExecutor.submit(myCallable);
+            System.out.println("i: " + i);
         }
 
-//        List<Future<Long>> futures = es.invokeAll(tasks);
-//
-//        for (Future<Long> future: futures) {
-//            System.out.println("future.get()" + future.get());
-//        }
+        threadPoolExecutor.shutdown();
 
-        Long firstFuture = es.invokeAny(tasks);
-
-        System.out.println("future.get()" + firstFuture);
-        System.out.println("FINISHED");
-        es.shutdown();
         return "redirect:/people";
+    }
+}
+
+class MyRejectedExecutionHandler implements RejectedExecutionHandler {
+
+    @Override
+    public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+        System.out.println("Rejected: " + r.toString());
     }
 }

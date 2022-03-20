@@ -8,7 +8,7 @@ public class MyCallable implements Callable<Long> {
     public Long call() {
         try {
             System.out.println("Start Runnable: " + Thread.currentThread().getId());
-            Thread.sleep(1000 + Math.round(Math.random() * 5000));
+            Thread.sleep(4000);
             System.out.println("Stop Runnable: " + Thread.currentThread().getId());
         } catch (InterruptedException e) {
             e.printStackTrace(System.out);
