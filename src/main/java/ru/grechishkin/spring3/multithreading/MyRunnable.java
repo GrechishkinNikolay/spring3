@@ -3,10 +3,10 @@ package ru.grechishkin.spring3.multithreading;
 import java.time.LocalDateTime;
 import java.util.concurrent.Callable;
 
-public class MyCallable implements Callable<Long> {
+public class MyRunnable implements Runnable {
 
     @Override
-    public Long call() {
+    public void run() {
         try {
             System.out.println("Start Runnable: " + LocalDateTime.now());
             Thread.sleep(4000);
@@ -14,11 +14,5 @@ public class MyCallable implements Callable<Long> {
         } catch (InterruptedException e) {
             e.printStackTrace(System.out);
         }
-        return Thread.currentThread().getId();
-    }
-
-    @Override
-    public String toString() {
-        return "REJECTED";
     }
 }

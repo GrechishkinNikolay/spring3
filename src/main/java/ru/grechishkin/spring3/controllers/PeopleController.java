@@ -1,6 +1,7 @@
 package ru.grechishkin.spring3.controllers;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -9,6 +10,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ru.grechishkin.spring3.dao.PersonDAO;
 import ru.grechishkin.spring3.models.Person;
 import ru.grechishkin.spring3.multithreading.MyCallable;
+import ru.grechishkin.spring3.multithreading.MyRunnable;
 
 @Controller
 @RequestMapping("/people")
@@ -93,19 +97,18 @@ public class PeopleController {
     @PostMapping("/start")
     public String startTimer() throws ExecutionException, InterruptedException {
 
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(2,
-                                                                       6,
-                                                                       1,
-                                                                       TimeUnit.MILLISECONDS,
-                                                                       new SynchronousQueue<>(),
-                                                                       new MyRejectedExecutionHandler());
-        for (int i = 0; i < 9; i++) {
-            MyCallable myCallable = new MyCallable();
-            threadPoolExecutor.submit(myCallable);
-            System.out.println("i: " + i);
-        }
+        System.out.println(LocalDateTime.now());
 
-        threadPoolExecutor.shutdown();
+        ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(2);
+
+//        scheduledExecutorService.schedule(new MyCallable(), 1, TimeUnit.SECONDS);
+//        scheduledExecutorService.scheduleAtFixedRate(new MyRunnable(), 1, 3, TimeUnit.SECONDS); //каждые 3 сек
+        scheduledExecutorService.scheduleWithFixedDelay(new MyRunnable(), 1, 3, TimeUnit.SECONDS); //через 3 сек после
+        // окончания предыдущей
+
+        Thread.sleep(20000);
+
+        scheduledExecutorService.shutdown();
 
         return "redirect:/people";
     }
